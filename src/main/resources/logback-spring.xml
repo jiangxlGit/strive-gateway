@@ -1,0 +1,38 @@
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 项目名称配置 -->
+
+    <contextName>strive-gateway</contextName>
+    <property name="APP_Name" value="strive-gateway" />
+    <!-- 统一的时间格式，用于日志头输出 -->
+    <timestamp key="timeStyle" datePattern="yyyy-MM-dd HH:mm:ss.SSS"/>
+    <!--配置控制台输出,开发环境有-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder 默认配置为PatternLayoutEncoder -->
+        <encoder>
+            <pattern>[%d{timeStyle}] [%X{ThreadID}] [%cn] %-5level %logger{35} - %msg%n</pattern>
+            <!--<pattern>[%d{timeStyle}] [%thread] [%cn] %-5level %logger{35} %caller{1} - %msg%n</pattern>-->
+        </encoder>
+    </appender>
+    <!--文件输出配置-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/${APP_Name}_run.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>../logs/${APP_Name}_run.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>[%d{timeStyle}] [%X{ThreadID}] [%cn] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 异步输出 -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+    </appender>
+    <logger name="com.jloved" level="INFO"></logger>
+
+ <!--日志的root目录，用于定位日志输出级别-->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/><appender-ref ref="ASYNC"/>
+    </root>
+</configuration>
