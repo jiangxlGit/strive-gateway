@@ -109,8 +109,8 @@
       <properties>
         <package.environment>dev</package.environment>
         <profileActive>dev</profileActive>
-        <application.ip>172.16.0.125:8848</application.ip>
-        <application.namespace>7b5474e6-a5fd-4bf3-8785-bfa81fa7da2e</application.namespace>
+        <application.ip>101.35.110.10:28848</application.ip>
+        <application.namespace>bb2a03b4-5c29-4ed5-802f-63c1f1a527e6</application.namespace>
       </properties>
       <activation>
         <activeByDefault>false</activeByDefault>
