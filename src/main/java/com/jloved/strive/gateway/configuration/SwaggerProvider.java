@@ -27,12 +27,6 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
     this.gatewayProperties = gatewayProperties;
   }
 
-  /**
-   * 网关应用名称
-   */
-  @Value("${spring.application.name}")
-  private String self;
-
   @Override
   public List<SwaggerResource> get() {
     List<SwaggerResource> resources = new ArrayList<>();
@@ -45,7 +39,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
           .filter(predicateDefinition -> ("Path").equalsIgnoreCase(predicateDefinition.getName()))
           .forEach(predicateDefinition -> resources.add(swaggerResource(route.getId(),
               predicateDefinition.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0")
-                  .replace("**", "v2/api-docs"))));
+                  .replace("**", API_URI))));
     });
     return resources;
   }
