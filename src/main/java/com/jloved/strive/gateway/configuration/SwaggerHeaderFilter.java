@@ -6,7 +6,13 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-
+/**
+ * @ClassName   SwaggerHeaderFilter
+ * @Description 如果是高版本的Spring Cloud Gateway，那么yml配置文件中的SwaggerHeaderFilter配置应该去掉
+ * @author      jiangxl
+ * @Date        2021/11/11 17:25
+ * @version     V1.0
+ */
 @Component
 public class SwaggerHeaderFilter extends AbstractGatewayFilterFactory {
 
