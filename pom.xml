@@ -44,20 +44,9 @@
     </dependency>
 
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>2.10.5</version>
-    </dependency>
-
-    <dependency>
       <groupId>com.github.xiaoymin</groupId>
-      <artifactId>swagger-bootstrap-ui</artifactId>
-      <version>1.9.3</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
+      <artifactId>knife4j-spring-boot-starter</artifactId>
+      <version>2.0.9</version>
     </dependency>
 
     <dependency>
@@ -123,7 +112,7 @@
         <package.environment>tx</package.environment>
         <profileActive>tx</profileActive>
         <application.ip>101.35.110.10:28848</application.ip>
-        <application.namespace>f09592b3-ac37-4f63-935b-a1851c690b1d</application.namespace>
+        <application.namespace>fd9a5dad-fe38-49de-8fcd-867c3558ff65</application.namespace>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
