@@ -5,18 +5,17 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.jloved.strive.gateway.configuration.NacosGatewayProperties;
 import com.jloved.strive.gateway.util.IpUtil;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -25,38 +24,18 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Component
-@RefreshScope
+@Data
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthFilter implements GlobalFilter, Ordered {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AuthFilter.class);
+  private final NacosGatewayProperties nacosGatewayProperties;
 
-  @Value("${jwt.secretKey}")
-  private String secretKey;
-
-  @Value("${jwt.auth.skip.urls}")
-  private String[] skipAuthUrls;
-
-  @Value("${jwt.auth.switch}")
-  private Boolean authSwitch;
-  @Value("${jwt.white.list}")
-  private String[] whiteList;
-
-  /**
-   * 后台登入有效时间
-   */
-  @Value("${back.token.expire.time:900}")
-  private long backTokenExpireTime;
-
-
-  @Autowired
-  private StringRedisTemplate stringRedisTemplate;
+  private final StringRedisTemplate stringRedisTemplate;
 
   @Override
   public int getOrder() {
@@ -67,8 +46,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     String url = exchange.getRequest().getURI().getPath();
     //跳过不需要验证的路径
-    List<String> list = Arrays.asList(skipAuthUrls);
-    if (!authSwitch) {
+    List<String> list = Arrays.asList(nacosGatewayProperties.getSkipAuthUrls());
+    if (!nacosGatewayProperties.getAuthSwitch()) {
       return chain.filter(exchange);
     }
     if (list.contains(url) || isIPWhiteList(exchange.getRequest().getRemoteAddress())) {
@@ -102,7 +81,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     String querySource = stringRedisTemplate.opsForHash().get(refreshTokenKey, "source").toString();
     if ("back".equals(querySource)) {
       //刷新token 失效时间
-      stringRedisTemplate.expire(token, backTokenExpireTime, TimeUnit.SECONDS);
+      stringRedisTemplate.expire(token, nacosGatewayProperties.getBackTokenExpireTime(), TimeUnit.SECONDS);
     } else {
       //刷新token 失效时间
       stringRedisTemplate.expire(token, 0, TimeUnit.SECONDS);
@@ -113,7 +92,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
   private boolean isIPWhiteList(InetSocketAddress remoteAddress) {
     log.info("requestIP:{}", remoteAddress.getHostName());
-    List<String> list = Arrays.asList(whiteList);
+    List<String> list = Arrays.asList(nacosGatewayProperties.getWhiteList());
     for (String ipSection : list) {
       if (IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
         return true;
@@ -143,14 +122,14 @@ public class AuthFilter implements GlobalFilter, Ordered {
     String issuer = "wjt001";
 
     try {
-      Algorithm algorithm = Algorithm.HMAC256(secretKey);
+      Algorithm algorithm = Algorithm.HMAC256(nacosGatewayProperties.getSecretKey());
       JWTVerifier verifier = JWT.require(algorithm)
           .withIssuer(issuer)
           .build();
       DecodedJWT jwt = verifier.verify(token);
       userName = jwt.getClaim("userName").asString();
     } catch (JWTVerificationException e) {
-      LOGGER.error(e.getMessage(), e);
+      log.error(e.getMessage(), e);
       return "";
     }
     return userName;

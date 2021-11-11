@@ -16,7 +16,8 @@
 
   <properties>
     <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
-    <spring-nacos.discovery.version>0.2.1.RELEASE</spring-nacos.discovery.version>
+    <spring-cloud-alibaba.version>0.2.2.RELEASE</spring-cloud-alibaba.version>
+    <spring-nacos.discovery.version>0.2.2.RELEASE</spring-nacos.discovery.version>
     <java.version>1.8</java.version>
   </properties>
 
@@ -34,11 +35,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-gateway</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
     <dependency>
@@ -94,16 +90,13 @@
         <scope>import</scope>
       </dependency>
 
+      <!--SpringCloud Alibaba-->
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        <version>${spring-nacos.discovery.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        <version>0.2.2.RELEASE</version>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${spring-cloud-alibaba.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
     </dependencies>
@@ -130,7 +123,7 @@
         <package.environment>tx</package.environment>
         <profileActive>tx</profileActive>
         <application.ip>101.35.110.10:28848</application.ip>
-        <application.namespace>5f0d48e8-41d5-410c-9099-95f589c25883</application.namespace>
+        <application.namespace>f09592b3-ac37-4f63-935b-a1851c690b1d</application.namespace>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
@@ -141,6 +134,14 @@
   <!-- 编译插件 -->
   <build>
     <finalName>${project.artifactId}-${profileActive}</finalName>
+
+    <!--重要 如果不设置resource 会导致application.yaml中的@@找不到pom文件中的配置-->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
 
     <!-- 打包项目 mvn clean package -->
     <plugins>

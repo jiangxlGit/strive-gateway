@@ -1,0 +1,19 @@
+server:
+  port: 8999
+spring:
+  application:
+    name: strive-gateway
+  cloud:
+    nacos:
+      discovery:
+        namespace: '@application.namespace@'
+        server-addr: '@application.ip@'
+      config:
+        namespace: '@application.namespace@'
+        server-addr: '@application.ip@'
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        ext-config:
+          - data-id: ${spring.application.name}-public.yaml
+            group: DEFAULT_GROUP
+            refresh: true
