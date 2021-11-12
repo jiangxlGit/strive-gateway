@@ -39,7 +39,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
           .filter(predicateDefinition -> ("Path").equalsIgnoreCase(predicateDefinition.getName()))
           .forEach(predicateDefinition -> resources.add(swaggerResource(route.getId(),
               predicateDefinition.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0")
-                  .replace("**", API_URI))));
+                  .replace("/**", API_URI))));
     });
     return resources;
   }
