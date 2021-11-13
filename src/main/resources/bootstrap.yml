@@ -13,7 +13,7 @@ spring:
         server-addr: '@application.ip@'
         file-extension: yaml
         group: DEFAULT_GROUP
-        ext-config:
-          - data-id: ${spring.application.name}-public.yaml
-            group: DEFAULT_GROUP
-            refresh: true
+        extension-configs:
+        - data-id: ${spring.application.name}-public.yaml
+          group: DEFAULT_GROUP
+          refresh: true
