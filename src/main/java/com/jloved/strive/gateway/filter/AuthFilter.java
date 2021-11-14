@@ -24,12 +24,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Data
 @Slf4j
+@Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthFilter implements GlobalFilter, Ordered {
 
@@ -94,7 +95,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     log.info("requestIP:{}", remoteAddress.getHostName());
     List<String> list = Arrays.asList(nacosGatewayProperties.getWhiteList());
     for (String ipSection : list) {
-      if (IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
+      if ("localhost".equals(remoteAddress.getHostName()) || "127.0.0.1".equals(remoteAddress.getHostName()) || IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
         return true;
       }
     }
