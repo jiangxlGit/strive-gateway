@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     if (!nacosGatewayProperties.getAuthSwitch()) {
       return chain.filter(exchange);
     }
-    if (list.contains(url) || isIPWhiteList(exchange.getRequest().getRemoteAddress())) {
+    if (list.contains(url) || isIPWhiteList(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()))) {
       return chain.filter(exchange);
     }
     //从请求头中取出token
@@ -62,7 +63,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
       return writeTo(exchange, "401", "401 Unauthorized");
     }
 
-    if (!stringRedisTemplate.hasKey(token)) {
+    if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(token))) {
       log.info("session unauthorized,token:{}", token);
       return writeTo(exchange, "401", "Session Unauthorized");
     }
@@ -79,7 +80,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     ServerWebExchange mutableExchange = exchange.mutate().request(mutableReq).build();
 
     String refreshTokenKey = stringRedisTemplate.opsForValue().get(token);
-    String querySource = stringRedisTemplate.opsForHash().get(refreshTokenKey, "source").toString();
+    assert refreshTokenKey != null;
+    String querySource = Objects.requireNonNull(stringRedisTemplate.opsForHash().get(refreshTokenKey, "source")).toString();
     if ("back".equals(querySource)) {
       //刷新token 失效时间
       stringRedisTemplate.expire(token, nacosGatewayProperties.getBackTokenExpireTime(), TimeUnit.SECONDS);
@@ -93,9 +95,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
   private boolean isIPWhiteList(InetSocketAddress remoteAddress) {
     log.info("requestIP:{}", remoteAddress.getHostName());
-    List<String> list = Arrays.asList(nacosGatewayProperties.getWhiteList());
+    String[] list = nacosGatewayProperties.getWhiteList();
     for (String ipSection : list) {
-      if ("localhost".equals(remoteAddress.getHostName()) || "127.0.0.1".equals(remoteAddress.getHostName()) || IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
+      if ("localhost".equals(remoteAddress.getHostName())
+          || "127.0.0.1".equals(remoteAddress.getHostName())
+          || IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
         return true;
       }
     }
@@ -115,7 +119,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
   /**
    * JWT验证
    *
-   * @param token
    * @return userName
    */
   private String verifyJWT(String token, String url) {
