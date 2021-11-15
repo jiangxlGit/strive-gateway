@@ -13,3 +13,7 @@ spring:
         server-addr: '@application.ip@'
         file-extension: yaml
         group: DEFAULT_GROUP
+        extension-configs:
+        - data-id: biaopu-public.yaml
+          group: DEFAULT_GROUP
+          refresh: true

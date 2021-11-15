@@ -42,7 +42,6 @@ public class JwtTokenUtils implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-
     byte[] keyBytes = Decoders.BASE64.decode(jwtSecurityProperties.getBase64Secret());
     this.key = Keys.hmacShaKeyFor(keyBytes);
   }
