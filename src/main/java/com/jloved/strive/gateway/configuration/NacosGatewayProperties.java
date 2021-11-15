@@ -41,12 +41,6 @@ public class NacosGatewayProperties {
   private String nameSpace;
 
   /**
-   * 后台登入有效时间
-   */
-  @Value("${jwt.secretKey}")
-  private String secretKey;
-
-  /**
    * 跳过验证url列表
    */
   @Value("${jwt.auth.skip.urls}")
@@ -64,9 +58,4 @@ public class NacosGatewayProperties {
   @Value("${jwt.white.list}")
   private String[] whiteList;
 
-  /**
-   * 后台登入有效时间
-   */
-  @Value("${back.token.expire.time:9000}")
-  private long backTokenExpireTime;
 }

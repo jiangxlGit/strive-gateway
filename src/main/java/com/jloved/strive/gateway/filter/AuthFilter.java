@@ -7,10 +7,15 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jloved.strive.gateway.configuration.NacosGatewayProperties;
 import com.jloved.strive.gateway.util.IpUtil;
+import com.jloved.strive.gateway.util.JwtSecurityProperties;
+import com.jloved.strive.gateway.util.JwtTokenUtils;
+import io.jsonwebtoken.Claims;
+import io.netty.util.internal.ObjectUtil;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.Data;
@@ -26,6 +31,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,6 +45,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
   private final NacosGatewayProperties nacosGatewayProperties;
 
   private final StringRedisTemplate stringRedisTemplate;
+
+  private final JwtTokenUtils jwtTokenUtils;
+
+  private final JwtSecurityProperties jwtSecurityProperties;
 
   @Override
   public int getOrder() {
@@ -69,14 +80,14 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
 
     //取出token包含的身份
-    String userName = verifyJWT(token, url);
-    if (userName.isEmpty()) {
+    Long coachId = verifyJWT(token);
+    if (coachId == null) {
       log.info("invalid token,token:{}", token);
       return writeTo(exchange, "401", "invalid token");
     }
     //将现在的request，添加当前身份
     ServerHttpRequest mutableReq = exchange.getRequest().mutate()
-        .header("Authorization-UserName", userName).build();
+        .header("Authorization-UserName", coachId.toString()).build();
     ServerWebExchange mutableExchange = exchange.mutate().request(mutableReq).build();
 
     String refreshTokenKey = stringRedisTemplate.opsForValue().get(token);
@@ -84,7 +95,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     String querySource = Objects.requireNonNull(stringRedisTemplate.opsForHash().get(refreshTokenKey, "source")).toString();
     if ("back".equals(querySource)) {
       //刷新token 失效时间
-      stringRedisTemplate.expire(token, nacosGatewayProperties.getBackTokenExpireTime(), TimeUnit.SECONDS);
+      stringRedisTemplate.expire(token, jwtSecurityProperties.getTokenValidityInSeconds()/1000, TimeUnit.SECONDS);
     } else {
       //刷新token 失效时间
       stringRedisTemplate.expire(token, 0, TimeUnit.SECONDS);
@@ -121,22 +132,19 @@ public class AuthFilter implements GlobalFilter, Ordered {
    *
    * @return userName
    */
-  private String verifyJWT(String token, String url) {
-    String userName;
-    String issuer = "wjt001";
-
-    try {
-      Algorithm algorithm = Algorithm.HMAC256(nacosGatewayProperties.getSecretKey());
-      JWTVerifier verifier = JWT.require(algorithm)
-          .withIssuer(issuer)
-          .build();
-      DecodedJWT jwt = verifier.verify(token);
-      userName = jwt.getClaim("userName").asString();
-    } catch (JWTVerificationException e) {
-      log.error(e.getMessage(), e);
-      return "";
+  private Long verifyJWT(String token) {
+    Long coachId = null;
+    if (StringUtils.hasText(token) && jwtTokenUtils.validateToken(token)) {
+      Claims claims = jwtTokenUtils.getClaimsFromToken(token);
+      Object obj = claims.get(JwtTokenUtils.AUTHORITIES_KEY);
+      if (!ObjectUtils.isEmpty(obj) && obj instanceof Map) {
+        Map<String, Long> map = (Map<String, Long>) obj;
+        coachId = map.get("coachId");
+      }
+    } else {
+      log.debug("no valid JWT token found");
     }
-    return userName;
+    return coachId;
   }
 
 }
