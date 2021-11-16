@@ -1,24 +1,23 @@
 package com.jloved.strive.gateway.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.CompressionCodecs;
+import io.jsonwebtoken.CompressionException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 /**
@@ -83,26 +82,6 @@ public class JwtTokenUtils implements InitializingBean {
       expiration = null;
     }
     return expiration;
-  }
-
-  public Authentication getAuthentication(String token) {
-    Claims claims = Jwts.parser()
-        .setSigningKey(key)
-        .parseClaimsJws(token)
-        .getBody();
-
-    if (claims.get(AUTHORITIES_KEY) != null) {
-      Collection<? extends GrantedAuthority> authorities =
-          Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-              .map(SimpleGrantedAuthority::new)
-              .collect(Collectors.toList());
-
-      User principal = new User(claims.getSubject(), "", authorities);
-
-      return new UsernamePasswordAuthenticationToken(principal, token, authorities);
-    } else {
-      return null;
-    }
   }
 
   @SneakyThrows

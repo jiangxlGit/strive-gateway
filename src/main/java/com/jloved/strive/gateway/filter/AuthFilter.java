@@ -108,9 +108,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     log.info("requestIP:{}", remoteAddress.getHostName());
     String[] list = nacosGatewayProperties.getWhiteList();
     for (String ipSection : list) {
-      if ("localhost".equals(remoteAddress.getHostName())
-          || "127.0.0.1".equals(remoteAddress.getHostName())
-          || IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
+      if (IpUtil.ipExistsInRange(remoteAddress.getHostName(), ipSection)) {
         return true;
       }
     }
