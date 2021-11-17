@@ -1,16 +1,10 @@
 package com.jloved.strive.gateway.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jloved.strive.gateway.configuration.NacosGatewayProperties;
 import com.jloved.strive.gateway.util.IpUtil;
 import com.jloved.strive.gateway.util.JwtSecurityProperties;
 import com.jloved.strive.gateway.util.JwtTokenUtils;
 import io.jsonwebtoken.Claims;
-import io.netty.util.internal.ObjectUtil;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -18,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
