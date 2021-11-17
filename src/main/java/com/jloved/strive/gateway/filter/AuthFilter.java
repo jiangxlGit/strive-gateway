@@ -73,7 +73,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
 
     //取出token包含的身份
-    Long coachId = verifyJWT(token);
+    Integer coachId = verifyJWT(token);
     if (coachId == null) {
       log.info("invalid token,token:{}", token);
       return writeTo(exchange, "401", "invalid token");
@@ -123,13 +123,13 @@ public class AuthFilter implements GlobalFilter, Ordered {
    *
    * @return userName
    */
-  private Long verifyJWT(String token) {
-    Long coachId = null;
+  private Integer verifyJWT(String token) {
+    Integer coachId = null;
     if (StringUtils.hasText(token) && jwtTokenUtils.validateToken(token)) {
       Claims claims = jwtTokenUtils.getClaimsFromToken(token);
       Object obj = claims.get(JwtTokenUtils.AUTHORITIES_KEY);
       if (!ObjectUtils.isEmpty(obj) && obj instanceof Map) {
-        Map<String, Long> map = (Map<String, Long>) obj;
+        Map<String, Integer> map = (Map<String, Integer>) obj;
         coachId = map.get("coachId");
       }
     } else {
