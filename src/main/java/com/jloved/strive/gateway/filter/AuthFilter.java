@@ -53,7 +53,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     String url = exchange.getRequest().getURI().getPath();
     //跳过不需要验证的路径
     List<String> list = Arrays.asList(nacosGatewayProperties.getSkipAuthUrls());
-    log.info(" ===== urlList: {}, url: {}", list.toString(), url);
+    log.info(" ===== urlList: {}, url: {}", list, url);
     if (!nacosGatewayProperties.getAuthSwitch()) {
       return chain.filter(exchange);
     }
