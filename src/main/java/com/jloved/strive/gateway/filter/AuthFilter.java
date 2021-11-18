@@ -53,10 +53,12 @@ public class AuthFilter implements GlobalFilter, Ordered {
     String url = exchange.getRequest().getURI().getPath();
     //跳过不需要验证的路径
     List<String> list = Arrays.asList(nacosGatewayProperties.getSkipAuthUrls());
+    log.info(" ===== urlList: {}, url: {}", list.toString(), url);
     if (!nacosGatewayProperties.getAuthSwitch()) {
       return chain.filter(exchange);
     }
-    if (list.contains(url) || isIPWhiteList(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()))) {
+    if (list.contains(url) || isIPWhiteList(
+        Objects.requireNonNull(exchange.getRequest().getRemoteAddress()))) {
       return chain.filter(exchange);
     }
     //从请求头中取出token
@@ -85,10 +87,12 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
     String refreshTokenKey = stringRedisTemplate.opsForValue().get(token);
     assert refreshTokenKey != null;
-    String querySource = Objects.requireNonNull(stringRedisTemplate.opsForHash().get(refreshTokenKey, "source")).toString();
+    String querySource = Objects.requireNonNull(
+        stringRedisTemplate.opsForHash().get(refreshTokenKey, "source")).toString();
     if ("back".equals(querySource)) {
       //刷新token 失效时间
-      stringRedisTemplate.expire(token, jwtSecurityProperties.getTokenValidityInSeconds()/1000, TimeUnit.SECONDS);
+      stringRedisTemplate.expire(token, jwtSecurityProperties.getTokenValidityInSeconds() / 1000,
+          TimeUnit.SECONDS);
     } else {
       //刷新token 失效时间
       stringRedisTemplate.expire(token, 0, TimeUnit.SECONDS);
