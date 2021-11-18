@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: strive-gateway
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     nacos:
       discovery:
@@ -14,6 +16,9 @@ spring:
         file-extension: yaml
         group: DEFAULT_GROUP
         extension-configs:
-        - data-id: biaopu-public.yaml
+        - data-id: strive-public.yaml
+          group: DEFAULT_GROUP
+          refresh: true
+        - data-id: strive-redis.yaml
           group: DEFAULT_GROUP
           refresh: true
