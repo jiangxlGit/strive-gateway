@@ -109,8 +109,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     //使用 fastjson 序列化
     FastJsonRedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer(Object.class);
     // value 值的序列化采用 fastJsonRedisSerializer
-    template.setValueSerializer(fastJsonRedisSerializer);
-    template.setHashValueSerializer(fastJsonRedisSerializer);
+    template.setValueSerializer(new StringRedisSerializer());
+    template.setHashValueSerializer(new StringRedisSerializer());
     // key 的序列化采用 StringRedisSerializer
     template.setKeySerializer(new StringRedisSerializer());
     template.setHashKeySerializer(new StringRedisSerializer());
