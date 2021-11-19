@@ -69,6 +69,14 @@ public class AuthFilter implements GlobalFilter, Ordered {
       return writeTo(exchange, "401", "401 Unauthorized");
     }
 
+    // 去除token前后空格
+    token = token.trim();
+
+    // 删除前缀Bearer(包括空格)
+    if (token.startsWith("Bearer ")) {
+      token = token.substring(7);
+    }
+
     if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(token))) {
       log.info("session unauthorized,token:{}", token);
       return writeTo(exchange, "401", "Session Unauthorized");
@@ -82,13 +90,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
     //将现在的request，添加当前身份
     ServerHttpRequest mutableReq = exchange.getRequest().mutate()
-        .header("Authorization-UserName", coachId.toString()).build();
+        .header("Authorization", token).build();
     ServerWebExchange mutableExchange = exchange.mutate().request(mutableReq).build();
 
     String refreshTokenKey = stringRedisTemplate.opsForValue().get(token);
-    assert refreshTokenKey != null;
-    String querySource = Objects.requireNonNull(
-        stringRedisTemplate.opsForHash().get(refreshTokenKey, "source")).toString();
+    String querySource = stringRedisTemplate.opsForHash().get(refreshTokenKey, "source").toString();
     if ("back".equals(querySource)) {
       //刷新token 失效时间
       stringRedisTemplate.expire(token, jwtSecurityProperties.getTokenValidityInSeconds() / 1000,
