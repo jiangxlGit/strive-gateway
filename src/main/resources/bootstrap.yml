@@ -22,3 +22,20 @@ spring:
         - data-id: strive-redis.yaml
           group: DEFAULT_GROUP
           refresh: true
+
+    sentinel:
+      datasource:
+        ds:
+          nacos:
+            server-addr: '@application.ip@'
+            namespace: '@application.namespace@'
+            data-id: ${spring.application.name}-flow-rules
+            group-id: DEFAULT_GROUP
+            rule-type: flow
+      transport:
+        port: 8719
+        dashboard: localhost:9666
+      enabled: true
+      filter:
+        url-patterns: /**.html,/**.shtml
+      eager: true
