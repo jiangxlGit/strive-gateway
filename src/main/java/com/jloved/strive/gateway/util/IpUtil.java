@@ -1,10 +1,10 @@
 package com.jloved.strive.gateway.util;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 
 public class IpUtil {
 
