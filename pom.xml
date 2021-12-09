@@ -15,6 +15,7 @@
   </parent>
 
   <properties>
+    <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
     <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
     <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
     <java.version>1.8</java.version>
@@ -22,39 +23,40 @@
 
   <dependencies>
 
-    <!-- gateway -->
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-gateway</artifactId>
-    </dependency>
-
-    <!--加入nacos的依赖-->
+    <!--nacos注册中心-->
     <dependency>
       <groupId>com.alibaba.cloud</groupId>
       <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
     </dependency>
 
+    <!--nacos配置中心的依赖-->
     <dependency>
       <groupId>com.alibaba.cloud</groupId>
       <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
     </dependency>
 
-    <!--添加Sentinel的依赖-->
+    <!--gateway-->
     <dependency>
-      <groupId>com.alibaba.cloud</groupId>
-      <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
 
-    <!-- sentinel 整合 gateway-->
+    <!--spring cloud gateway整合sentinel的依赖-->
     <dependency>
       <groupId>com.alibaba.cloud</groupId>
       <artifactId>spring-cloud-alibaba-sentinel-gateway</artifactId>
     </dependency>
 
+    <!-- sentinel的依赖 -->
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>com.alibaba.csp</groupId>
       <artifactId>sentinel-datasource-nacos</artifactId>
-      <version>1.8.1</version>
+      <version>1.8.2</version>
     </dependency>
 
     <!--  lombok  -->
@@ -119,6 +121,15 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <!--SpringBoot的依赖-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
       <!--SpringCloud-->
       <dependency>
