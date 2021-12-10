@@ -39,7 +39,7 @@ spring:
           nacos:
             server-addr: '@application.ip@'
             namespace: '@application.namespace@'
-            data-id: ${spring.application.name}-gateway-flow
+            data-id: ${spring.application.name}-gateway-flow-rules
             group-id: ${sentinel.group-id}
             data-type: ${sentinel.data-type}
             rule-type: gw_flow
@@ -48,7 +48,7 @@ spring:
           nacos:
             server-addr: '@application.ip@'
             namespace: '@application.namespace@'
-            data-id: ${spring.application.name}-gateway-api
+            data-id: ${spring.application.name}-gateway-api-rules
             group-id: ${sentinel.group-id}
             data-type: ${sentinel.data-type}
             rule-type: gw_api_group
@@ -66,7 +66,7 @@ spring:
           nacos:
             server-addr: '@application.ip@'
             namespace: '@application.namespace@'
-            data-id: ${spring.application.name}-param-rules
+            data-id: ${spring.application.name}-param-flow-rules
             group-id: ${sentinel.group-id}
             data-type: ${sentinel.data-type}
             rule-type: param_flow
