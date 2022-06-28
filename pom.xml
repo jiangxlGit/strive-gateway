@@ -159,11 +159,11 @@
       <properties>
         <package.environment>dev</package.environment>
         <profileActive>dev</profileActive>
-        <application.ip>42.194.138.246:28848</application.ip>
+        <application.ip>nacos.jloved.top:80</application.ip>
         <application.namespace>bb2a03b4-5c29-4ed5-802f-63c1f1a527e6</application.namespace>
       </properties>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <activeByDefault>false</activeByDefault>
       </activation>
     </profile>
     <profile>
@@ -172,11 +172,11 @@
       <properties>
         <package.environment>tx</package.environment>
         <profileActive>tx</profileActive>
-        <application.ip>42.194.138.246:28848</application.ip>
+        <application.ip>nacos.jloved.top:80</application.ip>
         <application.namespace>fd9a5dad-fe38-49de-8fcd-867c3558ff65</application.namespace>
       </properties>
       <activation>
-        <activeByDefault>false</activeByDefault>
+        <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
   </profiles>
