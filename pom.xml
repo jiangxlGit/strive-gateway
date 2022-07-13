@@ -116,6 +116,11 @@
       <version>2.7.0</version>
     </dependency>
 
+    <!-- spring cloud zipkin 依赖 -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-zipkin</artifactId>
+    </dependency>
   </dependencies>
 
 
